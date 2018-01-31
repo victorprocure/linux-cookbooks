@@ -1,5 +1,4 @@
 #!/bin/bash
-PASSWORD=Password12#
 TIMEZONE="America/Edmonton"
 SWAPSIZE=512
 HOSTNAME="gentoo-machine"

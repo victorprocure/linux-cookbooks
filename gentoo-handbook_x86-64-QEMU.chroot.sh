@@ -1,5 +1,7 @@
-#Enter new environment
+#!/bin/bash
+PASSWORD=Password12#
 
+#Enter new environment
 source /etc/profile
 export PS1="(chroot) ${PS1}"
 
@@ -17,7 +19,7 @@ emerge --sync
 eselect profile set $(eselect profile list | grep 'systemd (stable)' | tail -1 | grep -Eio '\[[0-9]+\]' | grep -Eo '[0-9]+')
 
 #Update the @world set
-emerge -yDNu @world
+emerge -DNu @world
 emerge --depclean
 
 #Set timezone
@@ -35,12 +37,12 @@ env-update && source /etc/profile && export PS1="(CHROOT) $PS1"
 #Install Genkernel
 emerge gentoo-sources
 emerge sys-kernel/genkernel-next
-emerge --deselect sys-fs/udev
+#emerge --deselect sys-fs/udev
 
 #Configure fstab
 BOOT=$(blkid | grep -e '/dev/sda2' | grep -Eio '\sUUID=\"[0-9a-zA-Z\-]+\"' | sed 's/\"//g; s/\s//g')
-ROOT=$(blkid | grep -e '/dev/sda2' | grep -Eio '\sUUID=\"[0-9a-zA-Z\-]+\"' | sed 's/\"//g; s/\s//g')
-SWAP=$(blkid | grep -e '/dev/sda2' | grep -Eio '\sUUID=\"[0-9a-zA-Z\-]+\"' | sed 's/\"//g; s/\s//g')
+ROOT=$(blkid | grep -e '/dev/sda4' | grep -Eio '\sUUID=\"[0-9a-zA-Z\-]+\"' | sed 's/\"//g; s/\s//g')
+SWAP=$(blkid | grep -e '/dev/sda3' | grep -Eio '\sUUID=\"[0-9a-zA-Z\-]+\"' | sed 's/\"//g; s/\s//g')
 
 cat << EOF >> /etc/fstab
 $BOOT    /boot    ext2    defaults,noatime    0 2
@@ -67,7 +69,7 @@ for i in ${CONFIG_VAR[@]}; do
 done
 
 #Generate Kernel
-genkernel --udev --install all
+genkernel --udev --install --kernel-config=/root/kernel.config all
 
 #Configure Network Names
 echo "hostname=\"$HOSTNAME\"" > /etc/conf.d/hostname
