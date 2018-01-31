@@ -56,7 +56,7 @@ sed -i 's/CFLAGS=.*/CFLAGS=\"-march=native -O2 -pipe\"/' /mnt/gentoo/etc/portage
 mirrorselect -o -D -R 'North America' -q -s 5 >> /mnt/gentoo/etc/portage/make.conf
 
 #Copy DNS
-cp --dereference /etc/resolve.conf /mnt/gentoo/etc
+cp --dereference /etc/resolv.conf /mnt/gentoo/etc
 
 #Mount necessary filesystems
 mount --types proc /proc /mnt/gentoo/proc
