@@ -65,12 +65,12 @@ mount --make-rslave /mnt/gentoo/sys
 mount --make-rslave /mnt/gentoo/dev
 
 #Chroot into new environment
-mkdir /mnt/gentoo/dev-scripts
-cd /mnt/gentoo/dev-scripts
-wget https://raw.githubusercontent.com/victorprocure/linux-cookbooks/master/gentoo-handbook_x86-64-QEMU.chroot.sh
-chmod +x gentoo-handbook*.chroot.sh
+#mkdir /mnt/gentoo/dev-scripts
+#cd /mnt/gentoo/dev-scripts
+#wget https://raw.githubusercontent.com/victorprocure/linux-cookbooks/master/gentoo-handbook_x86-64-QEMU.chroot.sh
+#chmod +x gentoo-handbook*.chroot.sh
 
-chroot /mnt/gentoo /dev-scripts/gentoo-handbook_x86-64-QEMU.chroot.sh
+chroot /mnt/gentoo /bin/bash
 
 cd 
 umount -l /mnt/gentoo/dev{/shm,/pts,}
