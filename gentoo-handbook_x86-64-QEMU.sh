@@ -38,7 +38,7 @@ ntpd -q -g
 cd /mnt/gentoo
 wget $SOURCE
 wget $SOURCE.DIGESTS
-wget $SOURCE.asc
+wget $SOURCE.DIGESTS.asc
 
 #Verify Download
 openssl dgst -r -sha512 stage3*.tar.xz
