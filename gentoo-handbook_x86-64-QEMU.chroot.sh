@@ -1,5 +1,8 @@
 #!/bin/bash
 PASSWORD=Password12#
+TIMEZONE="America/Edmonton"
+HOSTNAME="gentoo-machine"
+DOMAIN="cluster1.victorprocure.co"
 
 #Enter new environment
 source /etc/profile
@@ -19,7 +22,8 @@ emerge --sync
 eselect profile set $(eselect profile list | grep 'systemd (stable)' | tail -1 | grep -Eio '\[[0-9]+\]' | grep -Eo '[0-9]+')
 
 #Update the @world set
-emerge -DNu @world
+emerge gentoo-sources
+emerge -DN @world
 emerge --depclean
 
 #Set timezone
@@ -31,11 +35,10 @@ sed -i -e 's/#\(en_US\)/\1/' /etc/locale.gen
 locale-gen
 
 #Select Locale
-eselect locale set $(eselect locale list | grep -Ei 'en_US.utf8' | grep -Eio '\[[0-9]+\]' | grep -Eio '[0-9]+')
+eselect locale set $(eselect locale list | grep -i 'en_US.utf8' | grep -Eio '\[[0-9]+\]' | grep -Eo '[0-9]+')
 env-update && source /etc/profile && export PS1="(CHROOT) $PS1"
 
 #Install Genkernel
-emerge gentoo-sources
 emerge sys-kernel/genkernel-next
 #emerge --deselect sys-fs/udev
 
@@ -57,6 +60,8 @@ ln -sf /proc/self/mounts /etc/mtab
 echo "UDEV=\"yes\"" >> /etc/genkernel.conf
 cd /usr/src/linux
 CONFIG_VAR=(CONFIG_BLK_DEV_SD CONFIG_EXT2_FS CONFIG_EXT2_FS_XATTR CONFIG_EXT2_FS_POSIX_ACL CONFIG_EXT2_FS_SECURITY CONFIG_EXT3_FS CONFIG_EXT3_FS_POSIX_ACL CONFIG_EXT3_FS_SECURITY CONFIG_PARTITION_ADVANCED CONFIG_EFI_PARTITION CONFIG_EFI CONFIG_EFI_STUB CONFIG_EFI_MIXED CONFIG_EFI_VARS CONFIG_GENTOO_LINUX_INIT_SYSTEMD CONFIG_EXPERT CONFIG_HYPERVISOR_GUEST CONFIG_PARAVIRT CONFIG_KVM_GUEST CONFIG_VIRTIO_PCI CONFIG_BLK_DEV CONFIG_VIRTIO_BLK CONFIG_VIRTIO_NET CONFIG_SCSI_LOWLEVEL CONFIG_SCSI_VIRTIO)
+
+make defconfig
 cp .config /root/kernel.config
 
 for i in ${CONFIG_VAR[@]}; do
@@ -64,7 +69,7 @@ for i in ${CONFIG_VAR[@]}; do
     if [ ! $? -eq 0 ]; then
         echo "${i}=y" >> /root/kernel.config
     else
-        sed -ir "s/^(${i}=.*|# ${i} is not set)/${i}=y" /root/kernel.config
+        sed -ir "s/^(${i}=.*|# ${i} is not set)/${i}=y/" /root/kernel.config
     fi
 done
 
@@ -79,10 +84,10 @@ config_eth0="dhcp"
 EOF
 
 #Auto start networking
-emerge dhcpcd
-cd /etc/init.d
-ln -s net.lo net.eth0
-systemctl enable dhcpcd
+#emerge dhcpcd
+#cd /etc/init.d
+#ln -s net.lo net.eth0
+#systemctl enable dhcpcd
 
 #Set password
 passwd << EOF
